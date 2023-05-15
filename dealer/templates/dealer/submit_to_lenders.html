@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FundCars</title>
+    {% load django_simple_bulma %} {% bulma %} {% font_awesome %}
+  </head>
+  <body>
+    {% include 'dealer/header.html' %}
+
+    <section class="section">
+      <div class="container has-text-centered">
+        <h1 class="title">
+          Your deal has been successfully submitted to the lender.
+        </h1>
+        <p>
+          Lender will contact you shortly in case of questions or more
+          documentations.
+        </p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>&copy; {{ current_year }} DealerClick. All rights reserved.</p>
+      </div>
+    </footer>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        // Toggle the navbar burger menu on mobile
+        var navbarBurgers = Array.prototype.slice.call(
+          document.querySelectorAll(".navbar-burger"),
+          0
+        );
+        if (navbarBurgers.length > 0) {
+          navbarBurgers.forEach(function (el) {
+            el.addEventListener("click", function () {
+              var target = el.dataset.target;
+              var targetEl = document.getElementById(target);
+              el.classList.toggle("is-active");
+              targetEl.classList.toggle("is-active");
+            });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>

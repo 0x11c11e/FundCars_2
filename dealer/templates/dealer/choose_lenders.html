@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FundCars | Choose Lenders</title>
+    {% load django_simple_bulma %} {% bulma %} {% font_awesome %}
+    <style>
+      html,
+      body {
+        min-height: 100%;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .content {
+        flex: 1;
+      }
+    </style>
+  </head>
+  <body>
+    {% include 'dealer/header.html' %}
+
+    <section class="section">
+      <div class="container">
+        <h1 class="title has-text-centered">Lender List</h1>
+
+        <table class="table is-fullwidth">
+          <thead>
+            <tr>
+              <th>Select</th>
+              <th>Name</th>
+              <th>Phone</th>
+              <th>APR</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for lender in lenders %}
+            <tr>
+              <td><input type="checkbox" /></td>
+              <td>{{ lender.lender_name }}</td>
+              <td>{{ lender.lender_phone }}</td>
+              <td>{{ lender.lender_apr }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+
+        <div class="has-text-centered">
+          <button
+            class="button is-primary is-large is-rounded"
+            onclick="event.preventDefault(); window.location.href='/dealer/submit_to_lenders/2';"
+          >
+            Final Submit To Lenders
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="content has-text-centered">
+        <p>&copy; DealerClick 2023. All rights reserved.</p>
+      </div>
+    </footer>
+  </body>
+</html>
