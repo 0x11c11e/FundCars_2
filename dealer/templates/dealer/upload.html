@@ -6,44 +6,51 @@
     <title>FundCars | Upload Form</title>
     {% load django_simple_bulma %} {% bulma %} {% font_awesome %}
     <style>
-      html,
-      body {
-        min-height: 100%;
+      body, html {
+        height: 100%;
         display: flex;
         flex-direction: column;
       }
-
-      .content {
-        flex: 1;
+      .hero-body {
+        flex-grow: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      form {
+        width: 100%;
+        max-width: 500px;
       }
     </style>
   </head>
   <body>
     {% include 'dealer/header.html' %}
 
-    <section class="section">
-        <div class="container">
-            <h1 class="title">Upload a document</h1>
-            <form method="post" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <div class="field">
-                  <div class="control">
-                    <div class="control">
-                        <button type="submit" class="button is-link">Upload</button>
+    <section class="hero is-fullheight is-light">
+        <div class="hero-body">
+            <div class="container has-text-centered">
+                <h1 class="title is-size-1">Upload a document</h1>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    <div class="field">
+                      <div class="control">
+                        <div class="control">
+                            <button type="submit" class="button is-link">Upload</button>
+                        </div>
                     </div>
-                </div>
 
-                <div class="field">
-                  <button
-                  class="button is-primary is-large is-rounded"
-                  onclick="event.preventDefault(); window.location.href='/dealer/choose_lenders';"
-                >
-                  Choose Lenders
-                </button>
-              </div>
+                    <div class="field">
+                      <button
+                      class="button is-primary is-large is-rounded"
+                      onclick="event.preventDefault(); window.location.href='/dealer/choose_lenders';"
+                    >
+                      Choose Lenders
+                    </button>
+                  </div>
 
-            </form>
+                </form>
+            </div>
         </div>
     </section>
 
