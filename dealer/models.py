@@ -1,4 +1,6 @@
 from django.db import models
+from django.utils import timezone
+import os
 
 # Create your models here.
 class Deal(models.Model):
@@ -38,11 +40,16 @@ class Deal(models.Model):
         verbose_name_plural = 'Deals'
         ordering = ['last_name']
 
+def get_upload_to(instance, filename):
+    name, ext = os.path.splitext(filename)
+
+    name = f"{name}_{timezone.now().strftime('%Y%m%d%H%M%S')}{ext}"
+    return os.path.join('media/', name)
 
 class Document(models.Model):
-    title = models.CharField(max_length=200)
+    title = models.CharField(max_length=200, default='title')
     uploaded_at = models.DateTimeField(auto_now_add=True)
-    file = models.FileField(upload_to='documents/')
+    file = models.FileField(upload_to=get_upload_to)
 
     def __str__(self):
         return self.file.name
