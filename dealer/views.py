@@ -1,8 +1,15 @@
+from django.contrib.auth import authenticate, login
+from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from .models import Deal
 from .forms import DocumentForm
 from lender.models import Lender
+
+from rest_framework import viewsets
+from rest_framework import permissions
+from .serializers import UserSerializer, GroupSerializer
+from django.contrib.auth.models import User, Group
 
 def index(request):
     return render(request, 'dealer/index.html')
@@ -48,3 +55,35 @@ def upload_file_view(request):
     else:
         form = DocumentForm()
     return render(request, 'dealer/upload.html', {'form': form})
+
+def login_view(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect("/home/")  # Redirect to a success page.
+        else:
+            # Return an 'invalid login' error message.
+            return render(request, "login.html", {"error": "Invalid login credentials"})
+    else:
+        return render(request, "login.html")
+
+class UserViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class GroupViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    permission_classes = [permissions.IsAuthenticated]

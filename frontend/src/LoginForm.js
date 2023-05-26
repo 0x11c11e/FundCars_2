@@ -1,7 +1,14 @@
 import React, { useState, useContext } from "react";
 import axios from "axios";
 import UserContext from "./UserContext";
-import { Box, Button, Container, TextField } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  TextField,
+} from "@mui/material";
 import { styled } from "@mui/system";
 import { Link } from "react-router-dom";
 
@@ -42,49 +49,53 @@ const LoginForm = () => {
   return (
     <Container maxWidth="xs">
       <CenterBox>
-        <form onSubmit={handleSubmit}>
-          <h2>Login</h2>
-          {error && <span>{error}</span>}
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            autoFocus
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="current-password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            color="primary"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Login
-          </Button>
-          <Link href="#" variant="body2">
-            Forgot your password? Click here.
-          </Link>
-        </form>
+        <Card>
+          <CardContent>
+            <form onSubmit={handleSubmit}>
+              <h2>Login</h2>
+              {error && <span>{error}</span>}
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                autoFocus
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+              <TextField
+                variant="outlined"
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="current-password"
+                placeholder="Password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                color="primary"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Login
+              </Button>
+              <Link href="#" variant="body2">
+                Forgot your password? Click here.
+              </Link>
+            </form>
+          </CardContent>
+        </Card>
       </CenterBox>
     </Container>
   );
