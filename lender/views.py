@@ -17,10 +17,6 @@ def deals_list(request):
     deals_list = Deal.objects.filter(is_submitted_to_lender=True)
     return render(request, 'lender/incoming_deals.html', {'deals': deals_list})
 
-def deal_detail(request, deal_id):
-    deal = Deal.objects.get(id=deal_id)
-    return render(request, 'lender/incoming_deal_detail.html', {'deal': deal})
-
 def approve_deal(request, deal_id):
     deal = Deal.objects.get(id=deal_id)
     deal.is_approved_by_lender = True

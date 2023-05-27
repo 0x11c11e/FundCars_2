@@ -1,49 +1,22 @@
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponseRedirect
+from django.contrib.auth.models import Group, User
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render
+from rest_framework.decorators import action
+from rest_framework import permissions, viewsets, status as status_codes
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
-from .models import Deal
-from .forms import DocumentForm
 from lender.models import Lender
+from lender.serializers import LenderSerializer
 
-from rest_framework import viewsets
-from rest_framework import permissions
-from .serializers import UserSerializer, GroupSerializer
-from django.contrib.auth.models import User, Group
+from .forms import DocumentForm
+from .models import Deal
+from .serializers import DealSerializer, GroupSerializer, UserSerializer
+
 
 def index(request):
     return render(request, 'dealer/index.html')
-
-def deals(request):
-    deals = Deal.objects.all()
-    return render(request, 'dealer/deals.html', {'deals': deals})
-
-def deal_detail(request, deal_id):
-    deal = Deal.objects.get(id=deal_id)
-    return render(request, 'dealer/deal_detail.html', {'deal': deal})
-
-def choose_lenders(request):
-    lenders = Lender.objects.all()
-    return render(request, 'dealer/choose_lenders.html', {'lenders': lenders})
-
-def submit_to_lenders(request, deal_id):
-    deal = Deal.objects.get(id=deal_id)
-    deal.is_submitted_to_lender = True
-    deal.save()
-    return render(request, 'dealer/submit_to_lenders.html')
-
-def deals_pending(request):
-    deals = Deal.objects.filter(is_submitted_to_lender=True, is_approved_by_lender=False)
-    return render(request, 'dealer/deals_pending.html', {'deals': deals})
-
-def show_approved_deals(request):
-    deals = Deal.objects.filter(is_approved_by_lender=True)
-    return render(request, 'dealer/show_approved_deals.html', {'deals': deals})
-
-
-def show_approved_deal_details(request, deal_id):
-    deal = Deal.objects.get(id=deal_id)
-    return render(request, 'dealer/show_approved_deal_details.html', {'deal': deal})
 
 def upload_file_view(request):
     print('upload_file_view')
@@ -87,3 +60,38 @@ class GroupViewSet(viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
     permission_classes = [permissions.IsAuthenticated]
+
+
+class DealsViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows deal to be viewed or edited.
+    """
+    queryset = Deal.objects.all()
+    serializer_class = DealSerializer
+
+    @action(detail=False, methods=['get'])
+    def submit_to_lenders(self, request):
+        deal_id = request.query_params.get('deal_id')
+        if not deal_id:
+            return Response({'error': 'deal_id is required'}, status=status_codes.HTTP_400_BAD_REQUEST)
+        deal = Deal.objects.get(id=deal_id)
+        deal.is_submitted_to_lender = True
+        deal.save()
+        return Response({'status': 'OK'}, status=status_codes.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def status(self, request):
+        status_filter = request.query_params.get('status')
+        if not status_filter:
+            return Response({'error': 'status is required'}, status=status_codes.HTTP_400_BAD_REQUEST)
+        queryset = self.get_queryset()
+        
+        if status_filter == 'pending':
+            queryset = queryset.filter(is_submitted_to_lender=True, is_approved_by_lender=False)
+        elif status_filter == 'approved':
+            queryset = queryset.filter(is_submitted_to_lender=True, is_approved_by_lender=True)
+        else:
+            return Response({'error': 'Invalid status'}, status=status_codes.HTTP_400_BAD_REQUEST)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
